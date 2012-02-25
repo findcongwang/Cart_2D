@@ -1,0 +1,37 @@
+#!/bin/bash
+echo "[Card_2d] building objects..."
+g++ -c Cart_2d.cpp
+echo "[Card_2d] Card_2d built"
+g++ -c ADT_2d.cc
+echo "[Card_2d] ADT_2d built"
+g++ -c basic_types_2d.cc
+echo "[Card_2d] basic_types_2d built"
+g++ -c Polyhedron_2d.cc
+echo "[Card_2d] Polyhedron_2d built"
+
+echo "[Card_2d] linking..."
+g++ -o Card_2d Cart_2d.o ADT_2d.o basic_types_2d.o Polyhedron_2d.o
+
+echo "[Card_2d] generating mesh..."
+./Card_2d
+
+echo "[Card_2d] generating gmsh version..."
+
+g++ -o conv_to_gmsh to_gmsh.cc
+./conv_to_gmsh
+numelevar=`cat to_gmsh.temp`
+targetfile=`cat to_gmsh.temp2`
+sed "s/ELEMENTSIZE/${numelevar}/g" to_gmsh_unprocess > ${targetfile}
+
+echo "[Card_2d] removing intermediate files..."
+rm Cart_2d.o
+rm ADT_2d.o
+rm basic_types_2d.o
+rm Polyhedron_2d.o
+rm Card_2d
+rm conv_to_gmsh
+rm to_gmsh.temp
+rm to_gmsh.temp2
+rm to_gmsh_unprocess
+
+echo "[Card_2d] All Done"

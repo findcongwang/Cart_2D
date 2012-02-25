@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+	echo "[Convert_to_gmsh] Usage: InputFileName OutputFileName"
+	exit
+fi
+
+echo "[Convert_to_gmsh] generating gmsh version"
+
+g++ -o conv_to_gmsh to_gmsh.cc
+./conv_to_gmsh $1 $2
+numelevar=`cat to_gmsh.temp`
+targetfile=`cat to_gmsh.temp2`
+sed "s/ELEMENTSIZE/${numelevar}/g" to_gmsh_unprocess > ${targetfile}
+
+echo "[Convert_to_gmsh] removing intermediate files"
+rm conv_to_gmsh
+rm to_gmsh.temp
+rm to_gmsh.temp2
+rm to_gmsh_unprocess
+
+echo "[Convert_to_gmsh] All Done"
